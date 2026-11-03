@@ -1,4 +1,5 @@
-# codysseyE1-1
+<h1 align="center">내 컴퓨터에 개발자용 '작업실' 꾸미기</h1>
+<p align="right">( 과제 제출자 : 신 재 풍 )</p>
 
 ## 1. 미션 개요
 
@@ -7,7 +8,7 @@
 - GitHub 저장소: <https://github.com/sinmodel/codysseyE1-1>
 - 웹 서버 소스: [`app/index.html`](./app/index.html)
 - Dockerfile: [`Dockerfile`](./Dockerfile)
-- GitHub 저장소 화면: [`docs/evidence/github-repository.png`](./docs/evidence/github-repository.png)
+- GitHub 저장소 화면: [`images/github-repository.png`](./images/github-repository.png)
 
 ## 2. 실행 환경
 
@@ -172,14 +173,28 @@ $ docker ps --filter name=workstation-web
 workstation-web   Up   0.0.0.0:8080->80/tcp
 
 $ curl -fsS http://localhost:8080
-<!doctype html>
-...
-<h1>Developer Workstation</h1>
-<p>Custom NGINX image running in Docker.</p>
-...
+<title>개발자 작업실 대시보드</title>
+<div class="brand">MY WORKSTATION</div>
+<h1>나의 개발 작업실</h1>
+... Docker 환경 요약 및 실습 확인 항목 대시보드 ...
 ```
 
-컨테이너의 80번 포트를 호스트의 8080번 포트에 연결했다. 접속 검증은 브라우저 대신 `curl` 응답으로 기록했다.
+컨테이너의 80번 포트를 호스트의 8080번 포트에 연결했다. 접속 검증은 브라우저와 `curl`로 했다. 대시보드에는 터미널·권한, Docker 운영, 이미지·Dockerfile, 웹 서버·포트, 데이터 저장소, Git·GitHub의 여섯 메뉴가 있으며, 메뉴를 선택하면 해당 주제의 핵심 요약과 명령어 표식을 보여준다. 페이지는 실습 정보를 표시하는 정적 대시보드이며, Docker 상태를 실시간 조회하는 모니터링 도구는 아니다.
+
+### 대시보드 학습 메뉴와 종료 순서
+
+대시보드의 메뉴는 터미널에서 실행할 명령어를 순서대로 잊지 않도록 돕는다. 메뉴는 자동 실행하지 않으며, 사용자가 Ubuntu 터미널에 명령을 입력한다.
+
+| 메뉴 | 시작 | 확인 | 종료 / 정리 |
+|---|---|---|---|
+| 터미널 · 권한 | `cd ~/workstation && pwd` | `ls -la && stat -c '%A %a %n' app data` | 실험 권한을 `755(app)`, `700(data)`로 복원 |
+| Docker 운영 | Docker Desktop 실행 후 `docker info` | `docker ps -a && docker images` | 실습 컨테이너 `docker stop`, `docker rm` |
+| 이미지 · Dockerfile | `cat Dockerfile` | `docker build -t workstation-web:v1 . && docker images` | 남는 연습 이미지 사용 여부 확인 후 선택적으로 삭제 |
+| 웹 서버 · 포트 | `docker run -d --name workstation-web -p 8080:80 workstation-web:v1` | `docker ps && curl -fsS http://localhost:8080` | `docker stop workstation-web && docker rm workstation-web` |
+| 데이터 저장소 | `docker volume create codyssey-workstation-data` | 볼륨에 연결한 컨테이너에서 파일 내용 확인 | 컨테이너 삭제 후 `docker volume ls`; 필요 없으면 `docker volume rm` |
+| Git · GitHub | `git status && git branch --show-current` | `git diff --cached --check && git log -5` | `git push origin main && git status` 확인 |
+
+실습을 종료할 때는 웹 컨테이너와 연습 컨테이너를 먼저 삭제한다. 그 뒤 `docker ps -a`로 남은 컨테이너가 없는지 확인하고, named volume은 제출에 필요한 데이터가 아니면 별도로 삭제한다.
 
 ## 7. 바인드 마운트 변경 반영
 
@@ -250,7 +265,7 @@ origin  https://github.com/sinmodel/codysseyE1-1.git (push)
 
 사용자 이름과 이메일은 `git config --list` 요구에 맞춰 기록하되 공개 문서에서는 마스킹했다. Git은 로컬 변경 이력과 커밋을 관리하고, GitHub는 저장소를 원격으로 보관·공유·협업하는 플랫폼이다.
 
-저장소 화면 증거는 [`docs/evidence/github-repository.png`](./docs/evidence/github-repository.png)에서 확인할 수 있다. 이 이미지는 GitHub 저장소 화면이며, VS Code의 GitHub 로그인 화면을 증명하지는 않는다. VS Code 계정 인증 화면은 민감 정보가 보이지 않도록 캡처한 뒤 별도 증거로 추가해야 한다.
+저장소 화면 증거는 [`images/github-repository.png`](./images/github-repository.png)에서 확인할 수 있다. 이 이미지는 GitHub 저장소 화면이며, VS Code의 GitHub 로그인 화면을 증명하지는 않는다. VS Code 계정 인증 화면은 민감 정보가 보이지 않도록 `images/`에 캡처한 뒤 별도 증거로 추가해야 한다.
 
 ## 10. 트러블슈팅
 

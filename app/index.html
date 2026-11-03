@@ -1,14 +1,381 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Developer Workstation</title>
+    <meta name="theme-color" content="#101827">
+    <title>개발자 작업실 대시보드</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Segoe UI", "Malgun Gothic", sans-serif;
+        background: #101827;
+        color: #e5edf8;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(ellipse at 85% 0%, #173b4b 0, transparent 38rem),
+          #101827;
+      }
+
+      .shell { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 28px 0;
+        border-bottom: 1px solid #293548;
+      }
+
+      .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; }
+      .brand-mark {
+        display: grid;
+        width: 40px;
+        height: 40px;
+        place-items: center;
+        border-radius: 12px;
+        background: #37d6a5;
+        color: #10251f;
+        font-size: 21px;
+      }
+
+      .repo { color: #9aabc1; font-size: 14px; }
+      main { padding: 54px 0 64px; }
+      .eyebrow { color: #55dfb4; font-size: 13px; font-weight: 700; letter-spacing: .12em; }
+      h1 { margin: 12px 0; font-size: clamp(32px, 5vw, 52px); letter-spacing: -.04em; }
+      .intro { max-width: 650px; margin: 0; color: #a9b8cb; font-size: 17px; line-height: 1.7; }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        margin-top: 24px;
+        padding: 9px 13px;
+        border: 1px solid #285744;
+        border-radius: 999px;
+        background: #17362f;
+        color: #9aefd0;
+        font-size: 13px;
+      }
+
+      .dot { width: 8px; height: 8px; border-radius: 50%; background: #51e0a9; }
+      .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 30px; }
+      .menu-button {
+        min-height: 48px;
+        padding: 12px 14px;
+        border: 1px solid #35445a;
+        border-radius: 11px;
+        background: #182437;
+        color: #c5d1e0;
+        font: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .menu-button:hover { border-color: #55dfb4; color: #f0f5fb; }
+      .menu-button[aria-pressed="true"] { border-color: #37d6a5; background: #17362f; color: #9aefd0; }
+      .menu-button:focus-visible { outline: 2px solid #55dfb4; outline-offset: 3px; }
+      .menu-button.shutdown-button { border-color: #704153; color: #ffc7d5; }
+      .menu-button.shutdown-button[aria-pressed="true"] { border-color: #ff849f; background: #3b2630; color: #ffd8e1; }
+      .topic-detail {
+        margin-top: 14px;
+        padding: 24px;
+        border: 1px solid #2b394d;
+        border-radius: 16px;
+        background: rgb(25 37 55 / 88%);
+      }
+
+      .topic-kicker { color: #55dfb4; font-size: 12px; font-weight: 700; letter-spacing: .08em; }
+      .topic-title { margin: 9px 0; font-size: 22px; }
+      .topic-summary { margin: 0; color: #a9b8cb; line-height: 1.7; }
+      .command-title { margin: 22px 0 11px; font-size: 14px; }
+      .command-list { display: flex; flex-wrap: wrap; gap: 9px; }
+      .command-badge {
+        display: inline-block;
+        max-width: 100%;
+        padding: 8px 11px;
+        overflow-wrap: anywhere;
+        border: 1px solid #35445a;
+        border-radius: 8px;
+        background: #101827;
+        color: #d3e2f2;
+        font: 13px/1.5 Consolas, "Cascadia Code", monospace;
+      }
+      .workflow-title { margin: 24px 0 10px; font-size: 14px; }
+      .workflow-list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 9px;
+      }
+
+      .workflow-step {
+        min-width: 0;
+        padding: 13px;
+        border-radius: 10px;
+        background: #101827;
+      }
+
+      .workflow-step strong {
+        display: block;
+        margin-bottom: 7px;
+        color: #55dfb4;
+        font-size: 12px;
+      }
+
+      .workflow-step code {
+        display: block;
+        overflow-wrap: anywhere;
+        color: #d3e2f2;
+        font: 12px/1.55 Consolas, "Cascadia Code", monospace;
+      }
+
+      .cleanup-note {
+        margin-top: 12px;
+        padding: 11px 13px;
+        border-left: 3px solid #f2b84b;
+        border-radius: 8px;
+        background: rgb(242 184 75 / 8%);
+        color: #d9c79f;
+        font-size: 13px;
+      }
+      .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 42px; }
+      .card {
+        min-height: 160px;
+        padding: 22px;
+        border: 1px solid #2b394d;
+        border-radius: 16px;
+        background: rgb(25 37 55 / 88%);
+      }
+
+      .card-label { color: #92a4bc; font-size: 13px; }
+      .card-value { margin-top: 17px; font-size: 23px; font-weight: 700; }
+      .card-note { margin-top: 8px; color: #a9b8cb; font-size: 14px; }
+      .section-title { margin: 46px 0 16px; font-size: 20px; }
+      .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+      .step { padding: 17px; border-radius: 12px; background: #182437; color: #c5d1e0; font-size: 14px; }
+      .step strong { display: block; margin-bottom: 7px; color: #f0f5fb; }
+      footer { padding: 20px 0 32px; border-top: 1px solid #293548; color: #8092aa; font-size: 13px; }
+
+      @media (max-width: 720px) {
+        .grid { grid-template-columns: 1fr; }
+        .menu-grid { grid-template-columns: repeat(2, 1fr); }
+        .workflow-list { grid-template-columns: 1fr; }
+        .steps { grid-template-columns: 1fr; }
+        header { align-items: flex-start; gap: 12px; flex-direction: column; }
+        main { padding-top: 38px; }
+      }
+
+      @media (max-width: 420px) {
+        .menu-grid { grid-template-columns: 1fr; }
+        .topic-detail { padding: 19px; }
+        .workflow-list { grid-template-columns: 1fr; }
+      }
+    </style>
   </head>
   <body>
-    <main>
-      <h1>Developer Workstation</h1>
-      <p>Custom NGINX image running in Docker.</p>
-    </main>
+    <div class="shell">
+      <header>
+        <div class="brand"><span class="brand-mark">⌘</span><span>MY WORKSTATION</span></div>
+        <div class="repo">Docker 실습 프로젝트 · codysseyE1-1</div>
+      </header>
+
+      <main>
+        <div class="eyebrow">DEVELOPER WORKSPACE</div>
+        <h1>나의 개발 작업실</h1>
+        <p class="intro">
+          터미널, Git, Docker를 연결해 만든 개발 환경입니다.
+          컨테이너로 실행 중인 웹 페이지와 이번 실습의 핵심 구성을 한눈에 확인해 보세요.
+        </p>
+        <div class="status"><span class="dot"></span> 웹 페이지 응답 확인 · localhost:8080</div>
+
+        <h2 class="section-title">실습 메뉴</h2>
+        <nav class="menu-grid" aria-label="실습 메뉴">
+          <button class="menu-button" type="button" data-topic="terminal" aria-controls="topic-detail" aria-pressed="true">터미널 · 권한</button>
+          <button class="menu-button" type="button" data-topic="docker" aria-controls="topic-detail" aria-pressed="false">Docker 운영</button>
+          <button class="menu-button" type="button" data-topic="image" aria-controls="topic-detail" aria-pressed="false">이미지 · Dockerfile</button>
+          <button class="menu-button" type="button" data-topic="web" aria-controls="topic-detail" aria-pressed="false">웹 서버 · 포트</button>
+          <button class="menu-button" type="button" data-topic="storage" aria-controls="topic-detail" aria-pressed="false">데이터 저장소</button>
+          <button class="menu-button" type="button" data-topic="git" aria-controls="topic-detail" aria-pressed="false">Git · GitHub</button>
+          <button class="menu-button shutdown-button" type="button" data-topic="shutdown" aria-controls="topic-detail" aria-pressed="false">종료 · 연결 해제</button>
+        </nav>
+        <section class="topic-detail" id="topic-detail" aria-live="polite" aria-labelledby="topic-title">
+          <div class="topic-kicker" id="topic-kicker"></div>
+          <h3 class="topic-title" id="topic-title"></h3>
+          <p class="topic-summary" id="topic-summary"></p>
+          <h4 class="command-title">이 메뉴의 핵심 명령어</h4>
+          <div class="command-list" id="topic-commands"></div>
+          <h4 class="workflow-title">권장 실행 순서</h4>
+          <div class="workflow-list" id="topic-workflow"></div>
+          <div class="cleanup-note" id="cleanup-note"></div>
+        </section>
+
+        <section class="grid" aria-label="실습 환경 요약">
+          <article class="card">
+            <div class="card-label">웹 서버</div>
+            <div class="card-value">NGINX</div>
+            <div class="card-note">nginx:alpine 기반 커스텀 이미지</div>
+          </article>
+          <article class="card">
+            <div class="card-label">컨테이너 포트</div>
+            <div class="card-value">8080 → 80</div>
+            <div class="card-note">호스트에서 컨테이너 웹 서버로 연결</div>
+          </article>
+          <article class="card">
+            <div class="card-label">데이터 보존</div>
+            <div class="card-value">Docker Volume</div>
+            <div class="card-note">컨테이너를 지워도 데이터는 유지</div>
+          </article>
+        </section>
+
+        <h2 class="section-title">이번 실습에서 확인한 것</h2>
+        <section class="steps" aria-label="실습 확인 항목">
+          <div class="step"><strong>01 · 이미지 만들기</strong>Dockerfile로 웹 페이지를 이미지에 담았습니다.</div>
+          <div class="step"><strong>02 · 웹 페이지 열기</strong>포트 매핑 후 브라우저에서 응답을 확인했습니다.</div>
+          <div class="step"><strong>03 · 데이터 연결하기</strong>바인드 마운트 변경과 볼륨의 데이터 유지를 확인했습니다.</div>
+        </section>
+      </main>
+
+      <footer>Built with Docker · Developer workstation practice</footer>
+    </div>
+    <script>
+      const topics = {
+        terminal: {
+          kicker: "01 / TERMINAL · LINUX",
+          title: "터미널과 파일 권한",
+          summary: "Bash에서 현재 위치와 파일 구조를 확인하고, 필요한 파일·폴더의 권한을 살펴보거나 변경합니다.",
+          commands: ["pwd", "ls -la", "find . -maxdepth 2 -print", "stat -c '%A %a %n' app data", "chmod 640 docs/terminal-practice/note.txt"],
+          workflow: [
+            ["시작", "cd ~/workstation && pwd"],
+            ["확인", "ls -la && stat -c '%A %a %n' app data"],
+            ["종료 / 복원", "chmod 755 app; chmod 700 data"]
+          ],
+          cleanup: "권한 실험 후에는 원래 과제 권한인 755(app)와 700(data)로 복원하고 확인합니다."
+        },
+        docker: {
+          kicker: "02 / DOCKER · CONTAINERS",
+          title: "Docker 엔진과 컨테이너 운영",
+          summary: "Docker 클라이언트가 엔진에 연결되는지 확인하고, 컨테이너의 실행 상태와 로그를 살펴봅니다.",
+          commands: ["docker version", "docker info", "docker ps -a", "docker logs --tail 3 workstation-web", "docker stats --no-stream workstation-web"],
+          workflow: [
+            ["시작", "Docker Desktop 실행 후 docker info"],
+            ["확인", "docker ps -a && docker images"],
+            ["종료", "docker stop workstation-web && docker rm workstation-web"]
+          ],
+          cleanup: "연습용 컨테이너는 stop 후 rm으로 정리하고, 최종 제출 전 docker ps -a 상태를 확인합니다."
+        },
+        image: {
+          kicker: "03 / IMAGE · DOCKERFILE",
+          title: "Dockerfile로 이미지 만들기",
+          summary: "Dockerfile에 베이스 이미지와 웹 파일 복사 방법을 적고, 그 설정을 실행 가능한 이미지로 빌드합니다.",
+          commands: ["cat Dockerfile", "docker build -t workstation-web:v1 .", "docker images", "docker image inspect workstation-web:v1"],
+          workflow: [
+            ["시작", "cd ~/workstation && cat Dockerfile"],
+            ["빌드 확인", "docker build -t workstation-web:v1 . && docker images"],
+            ["종료 / 정리", "docker image rm workstation-web:v1 (선택)"]
+          ],
+          cleanup: "이미지는 필요한 제출 환경에 남겨도 되지만, 남는 연습 이미지는 이름과 사용 여부를 확인한 뒤 정리합니다."
+        },
+        web: {
+          kicker: "04 / NGINX · PORT MAPPING",
+          title: "웹 서버와 포트 연결",
+          summary: "NGINX 컨테이너의 80번 포트를 Ubuntu 호스트의 8080번 포트에 연결해 브라우저와 curl로 응답을 확인합니다.",
+          commands: ["docker run -d --name workstation-web -p 8080:80 workstation-web:v1", "docker ps --filter name=workstation-web", "curl -fsS http://localhost:8080"],
+          workflow: [
+            ["시작", "docker run -d --name workstation-web -p 8080:80 workstation-web:v1"],
+            ["접속 확인", "docker ps && curl -fsS http://localhost:8080"],
+            ["종료", "docker stop workstation-web && docker rm workstation-web"]
+          ],
+          cleanup: "포트 8080을 사용하는 컨테이너를 정리하지 않으면 다음 실습에서 포트 충돌이 발생할 수 있습니다."
+        },
+        storage: {
+          kicker: "05 / BIND MOUNT · VOLUME",
+          title: "바인드 마운트와 볼륨",
+          summary: "바인드 마운트는 호스트의 파일 변경을 컨테이너에 반영하고, named volume은 컨테이너를 지워도 데이터를 보존합니다.",
+          commands: ["docker run -d --name workstation-bind -p 8081:80 -v \"$PWD/app/site:/usr/share/nginx/html:ro\" nginx:alpine", "docker volume ls", "docker volume inspect codyssey-workstation-data", "docker exec workstation-vol-after cat /data/proof.txt"],
+          workflow: [
+            ["시작", "docker volume create codyssey-workstation-data"],
+            ["영속성 확인", "docker exec workstation-vol-after cat /data/proof.txt"],
+            ["종료", "docker rm -f workstation-vol-after; docker volume ls"]
+          ],
+          cleanup: "컨테이너를 삭제해도 named volume은 남습니다. 과제를 끝내고 데이터를 보존할 필요가 없으면 volume rm으로 별도 제거합니다."
+        },
+        git: {
+          kicker: "06 / GIT · GITHUB",
+          title: "Git과 GitHub 저장소",
+          summary: "Git으로 로컬 변경 이력을 관리하고, GitHub 원격 저장소 주소와 현재 브랜치를 확인합니다. 인증 토큰이나 비밀번호는 명령어에 넣지 않습니다.",
+          commands: ["git status", "git branch --show-current", "git remote -v", "git log --oneline -5", "git push origin main"],
+          workflow: [
+            ["시작", "git status && git branch --show-current"],
+            ["기록 확인", "git add . && git diff --cached --check && git commit"],
+            ["공유 / 종료", "git push origin main && git status"]
+          ],
+          cleanup: "push 후 git status를 확인하고 민감정보가 포함되지 않았는지 README와 커밋 파일을 다시 점검합니다."
+        },
+        shutdown: {
+          kicker: "07 / SHUTDOWN · SAFE EXIT",
+          title: "대시보드 완전 종료",
+          summary: "브라우저 창을 닫는 것만으로는 Ubuntu와 Docker 연결이 유지됩니다. 아래 순서대로 실행하면 실습 환경을 안전하게 정리할 수 있습니다.",
+          commands: ["docker ps", "docker stop dashboard", "exit"],
+          workflow: [
+            ["1단계 확인", "docker ps"],
+            ["2단계 컨테이너 종료", "docker stop dashboard"],
+            ["3단계 Ubuntu 종료", "exit"]
+          ],
+          cleanup: "종료 후 브라우저 창을 닫습니다. 이 대시보드는 원본 파일이 ~/workstation/app/index.html에 남아 있으므로 다시 실행할 때 docker run 명령으로 열 수 있습니다."
+        }
+      };
+
+      const menuButtons = document.querySelectorAll(".menu-button");
+      const topicKicker = document.getElementById("topic-kicker");
+      const topicTitle = document.getElementById("topic-title");
+      const topicSummary = document.getElementById("topic-summary");
+      const topicCommands = document.getElementById("topic-commands");
+      const topicWorkflow = document.getElementById("topic-workflow");
+      const cleanupNote = document.getElementById("cleanup-note");
+
+      function showTopic(topicId) {
+        const topic = topics[topicId];
+        if (!topic) {
+          return;
+        }
+
+        menuButtons.forEach((button) => {
+          button.setAttribute("aria-pressed", String(button.dataset.topic === topicId));
+        });
+        topicKicker.textContent = topic.kicker;
+        topicTitle.textContent = topic.title;
+        topicSummary.textContent = topic.summary;
+        topicCommands.replaceChildren(...topic.commands.map((command) => {
+          const badge = document.createElement("code");
+          badge.className = "command-badge";
+          badge.textContent = command;
+          return badge;
+        }));
+        topicWorkflow.replaceChildren(...topic.workflow.map(([label, command]) => {
+          const step = document.createElement("div");
+          step.className = "workflow-step";
+          const title = document.createElement("strong");
+          title.textContent = label;
+          const code = document.createElement("code");
+          code.textContent = command;
+          step.append(title, code);
+          return step;
+        }));
+        cleanupNote.textContent = topic.cleanup;
+      }
+
+      menuButtons.forEach((button) => {
+        button.addEventListener("click", () => showTopic(button.dataset.topic));
+      });
+      showTopic("terminal");
+    </script>
   </body>
 </html>
