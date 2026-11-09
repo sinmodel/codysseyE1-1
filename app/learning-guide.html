@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Codyssey 학습 안내판</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Segoe UI", "Malgun Gothic", sans-serif;
+        background: #0d1524;
+        color: #e8eff8;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0d1524 0%, #17243a 100%);
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 390px minmax(0, 1fr);
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        padding: 24px 16px;
+        border-right: 1px solid #293950;
+        background: rgb(15 25 40 / 96%);
+      }
+
+      .brand {
+        margin-bottom: 24px;
+        padding: 0 10px;
+        font-size: 19px;
+        font-weight: 800;
+      }
+
+      .brand small {
+        display: block;
+        margin-top: 5px;
+        color: #7ddfc1;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: .08em;
+      }
+
+      .guide-nav {
+        display: grid;
+        gap: 7px;
+      }
+
+      .guide-button {
+        display: grid;
+        grid-template-columns: 28px 1fr;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        padding: 12px 10px;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        background: transparent;
+        color: #aec0d5;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .guide-button:hover { background: #192a42; color: #f3f7fc; }
+      .guide-button[aria-current="step"] {
+        border-color: #44cfa3;
+        background: #17372f;
+        color: #9af0d3;
+      }
+
+      .step-number {
+        display: grid;
+        width: 28px;
+        height: 28px;
+        place-items: center;
+        border-radius: 50%;
+        background: #253650;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .guide-button[aria-current="step"] .step-number { background: #47d8aa; color: #10251f; }
+
+      main {
+        min-width: 0;
+        padding: 44px clamp(24px, 4vw, 56px) 64px;
+      }
+
+      .practice-workspace {
+        max-width: 980px;
+        min-height: calc(100vh - 88px);
+      }
+
+      .eyebrow { color: #64dfba; font-size: 13px; font-weight: 700; letter-spacing: .12em; }
+      h1 { margin: 10px 0 12px; font-size: clamp(32px, 4vw, 52px); }
+      .lead { max-width: 760px; margin: 0; color: #afbdd0; line-height: 1.8; }
+
+      .guide-panel {
+        max-width: 980px;
+        margin-top: 36px;
+        padding: clamp(22px, 4vw, 38px);
+        border: 1px solid #304158;
+        border-radius: 18px;
+        background: rgb(24 36 55 / 94%);
+        box-shadow: 0 22px 50px rgb(0 0 0 / 18%);
+      }
+
+      .phase { color: #65dfba; font-size: 13px; font-weight: 700; }
+      h2 { margin: 8px 0 12px; font-size: 27px; }
+      .summary { margin: 0 0 24px; color: #b2c0d3; line-height: 1.75; }
+
+      .instruction {
+        margin: 24px 0 10px;
+        font-size: 15px;
+      }
+
+      .command-list {
+        display: grid;
+        gap: 9px;
+      }
+
+      .command-list code {
+        display: block;
+        padding: 12px 14px;
+        overflow-wrap: anywhere;
+        border-left: 3px solid #47d8aa;
+        border-radius: 8px;
+        background: #0c1523;
+        color: #d8e8f6;
+        font: 14px/1.55 Consolas, monospace;
+      }
+
+      .tip {
+        margin-top: 24px;
+        padding: 14px 16px;
+        border-radius: 10px;
+        background: rgb(242 184 75 / 10%);
+        color: #decda2;
+        line-height: 1.65;
+      }
+
+      .tip strong { color: #f1cb78; }
+
+      .controls {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 28px;
+      }
+
+      .end-button {
+        width: 100%;
+        margin-top: 12px;
+        padding: 11px 16px;
+        border: 1px solid #75506b;
+        border-radius: 9px;
+        background: #402a39;
+        color: #ffd6e2;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .end-button:hover { border-color: #ff90ad; background: #50303f; }
+
+      .exit-screen {
+        display: grid;
+        min-height: 100vh;
+        place-items: center;
+        padding: 24px;
+        text-align: center;
+      }
+
+      .exit-card {
+        max-width: 440px;
+        padding: 32px;
+        border: 1px solid #304158;
+        border-radius: 18px;
+        background: #182437;
+      }
+
+      .exit-card h1 { font-size: 30px; }
+      .exit-card p { color: #b2c0d3; line-height: 1.7; }
+
+      .control-button {
+        min-width: 110px;
+        padding: 11px 16px;
+        border: 1px solid #405270;
+        border-radius: 9px;
+        background: #1b2a40;
+        color: #d8e5f3;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .control-button:hover { border-color: #64dfba; }
+      .control-button:disabled { cursor: default; opacity: .45; }
+
+      @media (max-width: 760px) {
+        .layout { grid-template-columns: 1fr; }
+        .sidebar {
+          position: static;
+          width: min(390px, 100%);
+          height: 46vh;
+          margin: 0 auto;
+          border-right: 0;
+          border-bottom: 1px solid #293950;
+        }
+        .guide-nav { grid-template-columns: repeat(2, 1fr); }
+        main { padding: 28px 16px 48px; }
+      }
+
+      @media (max-width: 430px) {
+        .guide-nav { grid-template-columns: 1fr; }
+        .controls { flex-direction: column-reverse; }
+        .control-button { width: 100%; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="brand">CODYSSEY<small>LEARNING GUIDE</small></div>
+        <nav class="guide-nav" id="guide-nav" aria-label="학습 단계"></nav>
+      </aside>
+
+      <main>
+        <section class="practice-workspace" aria-label="실습 화면">
+          <div class="eyebrow">GUIDED PRACTICE</div>
+          <h1>Docker 학습 안내판</h1>
+          <p class="lead">왼쪽 단계표를 따라 터미널 실습을 진행하세요. 안내판은 명령을 대신 실행하지 않습니다.</p>
+
+          <article class="guide-panel" aria-live="polite">
+            <div class="phase" id="guide-phase"></div>
+            <h2 id="guide-title"></h2>
+            <p class="summary" id="guide-summary"></p>
+            <h3 class="instruction">터미널에서 확인할 명령</h3>
+            <div class="command-list" id="guide-commands"></div>
+            <div class="tip" id="guide-tip"></div>
+            <div class="controls">
+              <button class="control-button" id="previous-button" type="button">이전 단계</button>
+              <button class="control-button" id="next-button" type="button">다음 단계</button>
+            </div>
+            <button class="end-button" id="end-button" type="button">학습 안내 종료</button>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const lessons = [
+        {
+          phase: "01 / 준비",
+          title: "학습 위치 확인",
+          summary: "실습을 시작하기 전에 현재 위치와 과제 폴더 구조를 확인합니다.",
+          commands: ["pwd", "ls", "cd ~/workstation", "ls -la"],
+          tip: "먼저 과제 폴더에 들어왔는지 확인하세요. 위치가 잘못되면 이후 명령도 다른 결과를 만들 수 있습니다."
+        },
+        {
+          phase: "02 / 권한",
+          title: "파일과 폴더 권한 이해",
+          summary: "읽기(r), 쓰기(w), 실행(x) 권한과 숫자 표기를 직접 확인합니다.",
+          commands: ["ls -l", "stat -c '%A %a %n' app data", "chmod 640 docs/terminal-practice/note.txt", "ls -l docs/terminal-practice/note.txt"],
+          tip: "실습 후에는 app은 755, data는 700으로 복원하는 것을 잊지 마세요."
+        },
+        {
+          phase: "03 / Docker",
+          title: "Docker 엔진 상태 확인",
+          summary: "Docker 명령이 연결되어 있고 컨테이너를 실행할 준비가 되었는지 확인합니다.",
+          commands: ["docker version", "docker info", "docker ps -a", "docker images"],
+          tip: "Server 정보가 나오지 않으면 Docker Desktop을 실행한 뒤 다시 확인하세요."
+        },
+        {
+          phase: "04 / 이미지",
+          title: "Dockerfile로 이미지 만들기",
+          summary: "Dockerfile과 빌드 컨텍스트를 확인하고 웹 이미지로 빌드합니다.",
+          commands: ["cat Dockerfile", "docker build -t workstation-web:v1 .", "docker images --filter reference=workstation-web:v1"],
+          tip: "빌드가 끝날 때까지 기다리세요. 이미지 이름과 태그를 정확히 입력해야 다음 단계에서 실행할 수 있습니다."
+        },
+        {
+          phase: "05 / 실행",
+          title: "컨테이너 실행과 접속",
+          summary: "호스트의 8080번 포트를 컨테이너의 80번 포트에 연결하고 웹 응답을 확인합니다.",
+          commands: ["docker run -d --name workstation-web -p 8080:80 workstation-web:v1", "docker ps", "curl.exe -I http://localhost:8080"],
+          tip: "브라우저에는 http://localhost:8080을 입력하세요. 포트 충돌이 있으면 기존 컨테이너를 정리합니다."
+        },
+        {
+          phase: "06 / 저장",
+          title: "바인드 마운트와 볼륨",
+          summary: "호스트 파일이 컨테이너에 즉시 반영되는 방식과 named volume의 영속성을 비교합니다.",
+          commands: ["docker volume create codyssey-workstation-data", "docker volume ls", "docker run -d --name workstation-bind -p 8081:80 -v \"$PWD/app/site:/usr/share/nginx/html:ro\" nginx:alpine"],
+          tip: "바인드 마운트와 볼륨은 목적이 다릅니다. 실습 중 변경이 가능한지와 삭제 후 데이터가 남는지를 각각 확인하세요."
+        },
+        {
+          phase: "07 / 공유",
+          title: "Git과 GitHub 변경 기록",
+          summary: "변경 사항을 확인하고 커밋한 뒤 원격 저장소에 공유합니다.",
+          commands: ["git status", "git branch --show-current", "git diff --check", "git add .", "git commit", "git push origin main"],
+          tip: "민감정보를 commit하거나 push하지 않았는지 반드시 확인하세요."
+        }
+      ];
+
+      const nav = document.getElementById("guide-nav");
+      const phase = document.getElementById("guide-phase");
+      const title = document.getElementById("guide-title");
+      const summary = document.getElementById("guide-summary");
+      const commands = document.getElementById("guide-commands");
+      const tip = document.getElementById("guide-tip");
+      const previousButton = document.getElementById("previous-button");
+      const nextButton = document.getElementById("next-button");
+      const endButton = document.getElementById("end-button");
+      let currentLesson = 0;
+
+      function showLesson(index) {
+        currentLesson = Math.max(0, Math.min(index, lessons.length - 1));
+        const lesson = lessons[currentLesson];
+
+        [...nav.children].forEach((button, buttonIndex) => {
+          if (buttonIndex === currentLesson) {
+            button.setAttribute("aria-current", "step");
+          } else {
+            button.removeAttribute("aria-current");
+          }
+        });
+
+        phase.textContent = lesson.phase;
+        title.textContent = lesson.title;
+        summary.textContent = lesson.summary;
+        commands.replaceChildren(...lesson.commands.map((command) => {
+          const code = document.createElement("code");
+          code.textContent = command;
+          return code;
+        }));
+        tip.innerHTML = "<strong>강사 팁: </strong>" + lesson.tip;
+        previousButton.disabled = currentLesson === 0;
+        nextButton.disabled = currentLesson === lessons.length - 1;
+      }
+
+      lessons.forEach((lesson, index) => {
+        const button = document.createElement("button");
+        button.className = "guide-button";
+        button.type = "button";
+        button.innerHTML = "<span class=\"step-number\">" + String(index + 1).padStart(2, "0") + "</span><span>" + lesson.title + "</span>";
+        button.addEventListener("click", () => showLesson(index));
+        nav.append(button);
+      });
+
+      previousButton.addEventListener("click", () => showLesson(currentLesson - 1));
+      nextButton.addEventListener("click", () => showLesson(currentLesson + 1));
+      endButton.addEventListener("click", () => {
+        if (!window.confirm("학습 안내를 종료할까요?")) {
+          return;
+        }
+
+        window.open("", "_self");
+        window.close();
+
+        window.setTimeout(() => {
+          document.body.innerHTML = `
+            <main class="exit-screen">
+              <section class="exit-card">
+                <div class="eyebrow">SESSION CLOSED</div>
+                <h1>학습 안내를 종료합니다</h1>
+                <p>실습 안내 창이 닫히지 않았다면 이 탭의 닫기 버튼을 눌러주세요.</p>
+              </section>
+            </main>`;
+        }, 150);
+      });
+      showLesson(0);
+    </script>
+  </body>
+</html>
